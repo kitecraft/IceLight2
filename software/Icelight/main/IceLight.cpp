@@ -253,9 +253,9 @@ extern "C" void app_main(void)
             //FillSolid(segment2.pixels, segment2.pixelCount, rand());
 
 
-            segment2.pixels[currPixel++] = CHSV(hue, 255, 255);
+            segment2.pixels[currPixel++] = CRGB::Yellow;// CHSV(hue, 255, 255);
             hue += 5;
-            if(currPixel == segment2.pixelCount){
+            if(currPixel == 50){
                 currPixel = 0;
             }
 
@@ -282,21 +282,23 @@ extern "C" void app_main(void)
             */
             
             
-            segment1.ClearLedData();
-            for(uint16_t i = 0; i < segment1.size(); i++){
-                segment1[i] = random();
-            }
-
+            //segment1.ClearLedData();
+            //for(uint16_t i = 0; i < segment1.size()/20; i++){
+                segment1[rand()%segment1.size()] = random();
+            //}
+            
+            /*
             if(currPixel>1)
-                Blend(segment2[currPixel-2], CRGB_SMALL(CRGB::Green), 4);
+                Blend(segment2[currPixel-2], CRGB_SMALL(CRGB::Green), 3);
             if(currPixel>2)
-                Blend(segment2[currPixel-3], CRGB_SMALL(CRGB::Green), 4);
+                Blend(segment2[currPixel-3], CRGB_SMALL(CRGB::Green), 2);
             if(currPixel>3)
-                Blend(segment2[currPixel-4], CRGB_SMALL(CRGB::Green), 4);
+                Blend(segment2[currPixel-4], CRGB_SMALL(CRGB::Green), 1);
             if(currPixel>4)
-                Blend(segment2[currPixel-5], CRGB_SMALL(CRGB::Green), 4);
-
+                Blend(segment2[currPixel-5], CRGB_SMALL(CRGB::Green), 1);
+            */
             segment2.FadeToBlackBy(1);
+            segment1.FadeToBlackBy(25);
 
 
             gpio_set_level(BLINK_GPIO, 1);
@@ -353,3 +355,8 @@ extern "C" void app_main(void)
         vTaskDelay(TickType_t(1));
     }
 }
+
+
+
+
+

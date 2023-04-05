@@ -63,7 +63,8 @@ void Blend( CRGB& existing, const CRGB& overlay, fract8 amountOfOverlay )
     Blend(existing, CRGB_SMALL(*overlay.r, *overlay.g, *overlay.b), amountOfOverlay);
 }
 
-/* not sure if this works
+#if 0
+/* not sure if this works*/
 void Blend( CHSV& existing, const CHSV& overlay, fract8 amountOfOverlay, GradientDirectionCode_t directionCode)
 {
     if( amountOfOverlay == 0) {
@@ -106,9 +107,9 @@ void Blend( CHSV& existing, const CHSV& overlay, fract8 amountOfOverlay, Gradien
     + scale8( overlay.sat,    amountOfOverlay);
     existing.val = scale8( existing.val, amountOfKeep)
     + scale8( overlay.val,  amountOfOverlay);
-}
-*/
 
+}
+#endif
 
 void FillSolid( CRGB * leds, int numToFill, const CRGB& color)
 {
