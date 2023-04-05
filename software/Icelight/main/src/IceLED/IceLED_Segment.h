@@ -2,6 +2,7 @@
 #include "Pixel_Types.h"
 #include <string.h>
 #include <stdint.h>
+#include "Colour_Utilities.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,6 +34,10 @@ public:
 
     // Reference to the n'th CRGB pixel
     CRGB &operator[](int x) { return pixels[x % pixelCount]; }
+
+    void FadeToBlackBy(uint8_t fadeBy) {
+        nscale8( pixels, pixelCount, 255 - fadeBy);
+     }
 
 };
 

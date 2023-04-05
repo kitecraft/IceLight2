@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+
 struct CHSV {
     union {
 		struct {
@@ -81,7 +82,7 @@ struct CRGB_SMALL{
     inline CRGB_SMALL() __attribute__((always_inline))
     {
     }
-
+    
     inline CRGB_SMALL(uint8_t r_, uint8_t g_, uint8_t b_) __attribute__((always_inline))
     {
         r = r_;
@@ -214,7 +215,7 @@ struct CRGB {
     }
 
     /// allow assignment from R, G, and B
-	inline CRGB& setRGB (uint8_t nr, uint8_t ng, uint8_t nb) __attribute__((always_inline))
+	inline CRGB& SetRGB (uint8_t nr, uint8_t ng, uint8_t nb) __attribute__((always_inline))
     {
         *r = nr;
         *g = ng;
@@ -222,6 +223,23 @@ struct CRGB {
         return *this;
     }
     
+    inline CRGB& nscale8_video (uint8_t scaledown )
+    {
+        nscale8x3_video( *r, *g, *b, scaledown);
+        return *this;
+    }
+    
+    inline CRGB& nscale8 (uint8_t scaledown )
+    {
+        nscale8x3( *r, *g, *b, scaledown);
+        return *this;
+    }
+    
+
+
+
+
+
     enum {
         AliceBlue=0xF0F8FF,
         Amethyst=0x9966CC,

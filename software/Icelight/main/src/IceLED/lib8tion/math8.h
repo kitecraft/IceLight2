@@ -213,8 +213,8 @@ LIB8STATIC uint8_t sqrt16(uint16_t x)
 /// @returns a byte value between a and b, inclusive
 LIB8STATIC uint8_t blend8( uint8_t a, uint8_t b, uint8_t amountOfB)
 {
-    uint16_t partial;
-    uint8_t result;
+    uint16_t partial = 0;
+    uint8_t result = 0;
     
     uint8_t amountOfA = 255 - amountOfB;
     
@@ -222,10 +222,8 @@ LIB8STATIC uint8_t blend8( uint8_t a, uint8_t b, uint8_t amountOfB)
     partial += a;
     
     partial += (b * amountOfB);
-    partial += b;
-    
+    partial += b;    
     result = partial >> 8;
     
     return result;
-
 }
