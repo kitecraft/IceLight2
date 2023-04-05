@@ -1,5 +1,115 @@
 #include "Colour_Utilities.h"
 
+
+void nscale8( CRGB* leds, uint16_t num_leds, uint8_t scale)
+{
+    for( uint16_t i = 0; i < num_leds; i++) {
+        leds[i].nscale8( scale);
+    }
+}
+
+//Uses nscale8 to reduce the brightness
+void FadeToBlackBy( CRGB* leds, uint16_t num_leds, uint8_t fadeBy)
+{
+    nscale8( leds, num_leds, 255 - fadeBy);
+}
+
+void nscale8_video( CRGB* leds, uint16_t num_leds, uint8_t scale)
+{
+    for( uint16_t i = 0; i < num_leds; i++) {
+        leds[i].nscale8_video( scale);
+    }
+}
+
+//Uses nscale8_video to reduce the brightness
+void FadeLightBy(CRGB* leds, uint16_t num_leds, uint8_t fadeBy)
+{
+    nscale8_video( leds, num_leds, 255 - fadeBy);
+}
+
+void FadeWithColor( CRGB* leds, uint16_t numLeds, const CRGB_SMALL& colormask)
+{
+    uint8_t fr, fg, fb;
+    fr = colormask.r;
+    fg = colormask.g;
+    fb = colormask.b;
+
+    for( uint16_t i = 0; i < numLeds; i++) {
+        *leds[i].r = scale8( *leds[i].r, fr);
+        *leds[i].g = scale8( *leds[i].g, fg);
+        *leds[i].b = scale8( *leds[i].b, fb);
+    }
+}
+
+
+void Blend( CRGB& existing, const CRGB_SMALL& overlay, uint8_t amountOfOverlay )
+{
+    if( amountOfOverlay == 0) {
+        return;
+    }
+
+    if( amountOfOverlay == 255) {
+        existing = overlay;
+        return;
+    }
+    
+    *existing.r   = blend8( *existing.r,   overlay.r,   amountOfOverlay);
+    *existing.g = blend8( *existing.g, overlay.g, amountOfOverlay);
+    *existing.b  = blend8( *existing.b,  overlay.b,  amountOfOverlay);
+}
+
+void Blend( CRGB& existing, const CRGB& overlay, fract8 amountOfOverlay )
+{
+    Blend(existing, CRGB_SMALL(*overlay.r, *overlay.g, *overlay.b), amountOfOverlay);
+}
+
+/* not sure if this works
+void Blend( CHSV& existing, const CHSV& overlay, fract8 amountOfOverlay, GradientDirectionCode_t directionCode)
+{
+    if( amountOfOverlay == 0) {
+        return;
+    }
+
+    if( amountOfOverlay == 255) {
+        existing = overlay;
+        return;
+    }
+
+    fract8 amountOfKeep = 255 - amountOfOverlay;
+
+    uint8_t huedelta8 = overlay.hue - existing.hue;
+
+    if( directionCode == SHORTEST_HUES ) {
+        directionCode = FORWARD_HUES;
+        if( huedelta8 > 127) {
+            directionCode = BACKWARD_HUES;
+        }
+    }
+
+    if( directionCode == LONGEST_HUES ) {
+        directionCode = FORWARD_HUES;
+        if( huedelta8 < 128) {
+            directionCode = BACKWARD_HUES;
+        }
+    }
+
+    if( directionCode == FORWARD_HUES) {
+        existing.hue = existing.hue + scale8( huedelta8, amountOfOverlay);
+    }
+    else /* directionCode == BACKWARD_HUES */
+    {
+        huedelta8 = -huedelta8;
+        existing.hue = existing.hue - scale8( huedelta8, amountOfOverlay);
+    }
+
+    existing.sat   = scale8( existing.sat,   amountOfKeep)
+    + scale8( overlay.sat,    amountOfOverlay);
+    existing.val = scale8( existing.val, amountOfKeep)
+    + scale8( overlay.val,  amountOfOverlay);
+}
+*/
+
+
 void FillSolid( CRGB * leds, int numToFill, const CRGB& color)
 {
     for( int i = 0; i < numToFill; i++) {
@@ -102,4 +212,30 @@ void FillGradientRGB( CRGB* leds,
         g88 += gdelta87;
         b88 += bdelta87;
     }
+}
+
+
+void FillGradientRGB( CRGB* leds, uint16_t numLeds, const CRGB_SMALL& c1, const CRGB_SMALL& c2)
+{
+    uint16_t last = numLeds - 1;
+    FillGradientRGB( leds, 0, c1, last, c2);
+}
+
+
+void FillGradientRGB( CRGB* leds, uint16_t numLeds, const CRGB_SMALL& c1, const CRGB_SMALL& c2, const CRGB_SMALL& c3)
+{
+    uint16_t half = (numLeds / 2);
+    uint16_t last = numLeds - 1;
+    FillGradientRGB( leds,    0, c1, half, c2);
+    FillGradientRGB( leds, half, c2, last, c3);
+}
+
+void FillGradientRGB( CRGB* leds, uint16_t numLeds, const CRGB_SMALL& c1, const CRGB_SMALL& c2, const CRGB_SMALL& c3, const CRGB_SMALL& c4)
+{
+    uint16_t onethird = (numLeds / 3);
+    uint16_t twothirds = ((numLeds * 2) / 3);
+    uint16_t last = numLeds - 1;
+    FillGradientRGB( leds,         0, c1,  onethird, c2);
+    FillGradientRGB( leds,  onethird, c2, twothirds, c3);
+    FillGradientRGB( leds, twothirds, c3,      last, c4);
 }

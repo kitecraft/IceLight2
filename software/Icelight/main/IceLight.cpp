@@ -249,19 +249,24 @@ extern "C" void app_main(void)
             //   if(colorIndex == ICE_COLOUR_COUNT){
             //       colorIndex = 0;
 
-            /*
-            FillSolid(segment2.pixels, segment2.pixelCount, rand());
-            segment2.pixels[currPixel++] = CHSV(255, hue, 255);
+
+            //FillSolid(segment2.pixels, segment2.pixelCount, rand());
+
+
+            segment2.pixels[currPixel++] = CHSV(hue, 255, 255);
             hue += 5;
             if(currPixel == segment2.pixelCount){
                 currPixel = 0;
             }
-            */
 
 
             //FillRainbow(segment2.pixels, segment2.pixelCount, 0, 256/segment2.pixelCount);
 
-            FillGradientRGB(segment2.pixels, 0, CRGB_SMALL(rand()), 40, CRGB_SMALL(rand()));
+
+            //FillGradientRGB(segment2.pixels, 0, CRGB_SMALL(rand()), 40, CRGB_SMALL(rand()));
+            //FillGradientRGB(segment2.pixels, 40, CRGB_SMALL(rand()), CRGB_SMALL(rand()));
+            //FillGradientRGB(segment2.pixels, 60, CRGB_SMALL(rand()), CRGB_SMALL(rand()), CRGB_SMALL(rand()));
+            //FillGradientRGB(segment2.pixels, 50, CRGB_SMALL(rand()), CRGB_SMALL(rand()), CRGB_SMALL(rand()), CRGB_SMALL(rand()));
 
         }
         
@@ -275,10 +280,24 @@ extern "C" void app_main(void)
                 colorIndex = 0;
             }
             */
-           segment1.ClearLedData();
+            
+            
+            segment1.ClearLedData();
             for(uint16_t i = 0; i < segment1.size(); i++){
                 segment1[i] = random();
             }
+
+            if(currPixel>1)
+                Blend(segment2[currPixel-2], CRGB_SMALL(CRGB::Green), 4);
+            if(currPixel>2)
+                Blend(segment2[currPixel-3], CRGB_SMALL(CRGB::Green), 4);
+            if(currPixel>3)
+                Blend(segment2[currPixel-4], CRGB_SMALL(CRGB::Green), 4);
+            if(currPixel>4)
+                Blend(segment2[currPixel-5], CRGB_SMALL(CRGB::Green), 4);
+
+            segment2.FadeToBlackBy(1);
+
 
             gpio_set_level(BLINK_GPIO, 1);
             if(!IceLed.Show()){
