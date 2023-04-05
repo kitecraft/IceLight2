@@ -2,7 +2,8 @@
     "idf.adapterTargetName": "esp32",
     "files.associations": {
         "vector": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "*.orig": "cpp"
     },
     "idf.openOcdConfigs": [
         "board/esp32-wrover-kit-3.3v.cfg"

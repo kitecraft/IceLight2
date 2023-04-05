@@ -6,10 +6,12 @@
 
 #include "IceLED_Channel.h"
 #include "Pixel_Types.h"
-#include "CRGB.h"
+#include "LED_Types.h"
+#include "Pixel_Types.h"
 #include "IceLED_Segment.h"
-#include "ColourHelpers.h"
+#include "Colour_Helpers.h"
 #include "IceLED_Delay.h"
+#include "Colour_Utilities.h"
 
 #include <vector>
 

@@ -1,8 +1,4 @@
-#ifndef __INC_LIB8TION_H
-#define __INC_LIB8TION_H
-
-/* defines get_millis() */
-
+#pragma once
 #include "freertos/FreeRTOS.h"
 #include "esp_timer.h"
 
@@ -169,16 +165,12 @@ Lib8tion is pronounced like 'libation': lie-BAY-shun
 
 */
 
-
-
 #include <stdint.h>
 
 #define LIB8STATIC __attribute__ ((unused)) static inline
 #define LIB8STATIC_ALWAYS_INLINE __attribute__ ((always_inline)) static inline
 
 #include <string.h>
-// for memmove, memcpy, and memset if not defined here
-#endif // end of !defined(__AVR__)
 
 #define QADD8_C 1
 #define QADD7_C 1
@@ -198,10 +190,6 @@ Lib8tion is pronounced like 'libation': lie-BAY-shun
 #define AVG15_C 1
 #define BLEND8_C 1
 
-
-///@defgroup lib8tion Fast math functions
-///A variety of functions for working with numbers.
-///@{
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -283,7 +271,6 @@ typedef union {
 
 #include "lib8tion/math8.h"
 #include "lib8tion/scale8.h"
-#include "lib8tion/random8.h"
 #include "lib8tion/trig8.h"
 
 ///////////////////////////////////////////////////////////////////////

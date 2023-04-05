@@ -3,6 +3,7 @@
 #include "driver/rmt_tx.h"
 #include <cstdlib>
 #include "IceLED_Pins.h"
+#include "LED_Types.h"
 #include "Pixel_Types.h"
 #include "freertos/semphr.h"
 

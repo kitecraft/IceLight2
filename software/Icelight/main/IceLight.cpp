@@ -89,7 +89,7 @@ extern "C" void app_main(void)
     IceLED IceLed;
 
 
-   uint16_t numLeds = 600;
+   uint16_t numLeds = 100;
    int numChannels = 4;
    iceled_config_t configArray[numChannels];
 
@@ -183,17 +183,17 @@ extern "C" void app_main(void)
     IceLed.SetBrightness(40);
     
     for(uint16_t i = 0; i < segment1.size(); i++){
-        segment1[i] = White;
+        segment1[i] = CRGB::White;
     }
-    for(uint16_t i = 0; i < segment2.size(); i++){
-        segment2[i] = WhiteSmoke;
-    }
+    //for(uint16_t i = 0; i < segment2.size(); i++){
+    //    segment2[i] = WhiteSmoke;
+    //}
 
     for(uint16_t i = 0; i < segment3.size(); i++){
-        segment3[i] = WhiteSmoke;
+        segment3[i] = CRGB::WhiteSmoke;
     }
     for(uint16_t i = 0; i < segment4.size(); i++){
-        segment4[i] = WhiteSmoke;
+        segment4[i] = CRGB::AliceBlue;
     }
     /*
     for(uint16_t i = 0; i < segment5.size(); i++){
@@ -214,6 +214,9 @@ extern "C" void app_main(void)
 
     bool curr = true;
 
+    static uint8_t hue;
+    int currPixel = 0;
+
     while (true) {
         //printf("Hello World\n");
         
@@ -225,6 +228,7 @@ extern "C" void app_main(void)
         }
         */
 
+       /*
         EVERY_N_SECONDS(1){
             if(curr){
                 IceLed.SetColourTemperature(CoolWhiteFluorescent);
@@ -235,16 +239,30 @@ extern "C" void app_main(void)
             }
             curr = !curr;
         }
+        */
 
-        EVERY_N_SECONDS_I(solidChange, 2){
-            for(uint16_t i = 0; i < segment2.size(); i++){
-                segment2[i] = ICE_COLOR_ARRAY[colorIndex];
-            }
+        EVERY_N_SECONDS_I(solidChange, 1){
+            //for(uint16_t i = 0; i < segment2.size(); i++){
+            //    segment2[i] = ICE_COLOR_ARRAY[colorIndex];
+            //}
+            //   colorIndex++;
+            //   if(colorIndex == ICE_COLOUR_COUNT){
+            //       colorIndex = 0;
 
-            colorIndex++;
-            if(colorIndex == ICE_COLOUR_COUNT){
-                colorIndex = 0;
+            /*
+            FillSolid(segment2.pixels, segment2.pixelCount, rand());
+            segment2.pixels[currPixel++] = CHSV(255, hue, 255);
+            hue += 5;
+            if(currPixel == segment2.pixelCount){
+                currPixel = 0;
             }
+            */
+
+
+            //FillRainbow(segment2.pixels, segment2.pixelCount, 0, 256/segment2.pixelCount);
+
+            FillGradientRGB(segment2.pixels, 0, CRGB_SMALL(rand()), 40, CRGB_SMALL(rand()));
+
         }
         
         EVERY_N_MILLISECONDS(g_fps){

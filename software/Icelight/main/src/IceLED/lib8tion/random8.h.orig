@@ -1,4 +1,5 @@
 #pragma once
+#include "../lib8tion.h"
 
 // Random Fast random number generators
 // Fast 8- and 16- bit unsigned random numbers.

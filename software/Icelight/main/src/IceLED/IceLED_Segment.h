@@ -1,6 +1,7 @@
 #pragma once
-#include "CRGB.h"
+#include "Pixel_Types.h"
 #include <string.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,28 +10,29 @@ extern "C" {
 class IceLED_Segment
 {
 private:
-    CRGB* _pixels = nullptr;
-    uint16_t _pixelCount = 0;
     uint8_t* _raw = nullptr;
     int _rawSize = 0;
 
 public:
+    CRGB* pixels = nullptr;
+    uint16_t pixelCount = 0;
+
     IceLED_Segment(){}
-    IceLED_Segment(CRGB* pixelHead, uint16_t pixelCount, uint8_t* raw){
-        _pixels = pixelHead;
-        _pixelCount = pixelCount;
+    IceLED_Segment(CRGB* pixelHead, uint16_t numPixels, uint8_t* raw){
+        pixels = pixelHead;
+        pixelCount = numPixels;
         _raw = raw;
-        _rawSize = sizeof(uint8_t) * _pixelCount * 3;
+        _rawSize = sizeof(uint8_t) * pixelCount * 3;
     }
     
-    uint16_t size() { return _pixelCount; }
+    uint16_t size() { return pixelCount; }
     
     void ClearLedData() {
         memset((uint8_t*)_raw, 0, _rawSize);
     }
 
     // Reference to the n'th CRGB pixel
-    CRGB &operator[](int x) { return _pixels[x % _pixelCount]; }
+    CRGB &operator[](int x) { return pixels[x % pixelCount]; }
 
 };
 
