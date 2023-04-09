@@ -12,6 +12,8 @@
 #include "Colour_Helpers.h"
 #include "IceLED_Delay.h"
 #include "Colour_Utilities.h"
+#include "Colour_Pallets.h"
+#include "IceLED_Segment.h"
 
 #include <vector>
 
@@ -20,6 +22,7 @@ extern "C" {
 #endif
 
 using namespace std;
+
 
 typedef struct{
     iceled_type_t ledType;
@@ -32,10 +35,10 @@ typedef struct{
     SemaphoreHandle_t channelActivitySem;
 } ChannelCBData_t;
 
-//static const uint8_t gMCU_mW  =  25 * 5; // 25mA @ 5v = 125 mW
+static const int gMCU_mW  =  350; // 25mA @ 5v = 125 mW
 static const uint8_t gRed_mW   = 16 * 5; ///< 16mA @ 5v = 80mW
-static const uint8_t gGreen_mW = 11 * 5; ///< 11mA @ 5v = 55mW
-static const uint8_t gBlue_mW  = 15 * 5; ///< 15mA @ 5v = 75mW
+static const uint8_t gGreen_mW = 16 * 5; ///< 11mA @ 5v = 55mW
+static const uint8_t gBlue_mW  = 16 * 5; ///< 15mA @ 5v = 75mW
 static const uint8_t gDark_mW  =  1 * 5; ///<  1mA @ 5v =  5mW
 
 class IceLED
@@ -45,6 +48,7 @@ private:
     uint16_t _pixelCount;
     uint8_t *_rawPixels = nullptr;
     uint8_t *_rmtPixels = nullptr;
+
     //used to ensure the channels aren't altered while show() is running
     SemaphoreHandle_t _synchroSem;
 
@@ -69,8 +73,8 @@ private:
 
 
     uint8_t _brightness = 0;
-    CRGB_SMALL GetAdjustment(uint8_t scale);
-    CRGB_SMALL ComputeAdjustment(uint8_t scale, const CRGB_SMALL & colorCorrection, const CRGB_SMALL & colorTemperature);
+    CRGBSmall GetAdjustment(uint8_t scale);
+    CRGBSmall ComputeAdjustment(uint8_t scale, const CRGBSmall & colorCorrection, const CRGBSmall & colorTemperature);
     uint8_t ComputeSingleAdjustment(uint8_t scale, uint8_t colorCorrection, uint8_t colorTemperature);
 
     // sets brightness to
@@ -78,8 +82,8 @@ private:
     uint32_t calculate_unscaled_power_mW();
 
     //self explanatory
-    CRGB_SMALL _colourCorrection = IceLEDColourCorrection::TypicalSMD5050;
-    CRGB_SMALL _colourTemperature = ColourTemperature::UncorrectedTemperature;
+    CRGBSmall _colourCorrection = IceLEDColourCorrection::TypicalSMD5050;
+    CRGBSmall _colourTemperature = ColourTemperature::UncorrectedTemperature;
     
 public:
     IceLED();

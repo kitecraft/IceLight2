@@ -168,7 +168,7 @@ void hsv2rgb_spectrum( const CHSV& hsv, CRGB& rgb)
 #define K170 170
 #define K85  85
 
-void hsv2rgb_rainbow( const CHSV& hsv, CRGB& rgb)
+void hsv2rgb_rainbow( const CHSV& hsv, uint8_t* rgb)
 {
     // Yellow has a higher inherent brightness than
     // any other color; 'pure' yellow is perceived to
@@ -356,9 +356,23 @@ void hsv2rgb_rainbow( const CHSV& hsv, CRGB& rgb)
     // To paraphrase Dr Bronner, profile! profile! profile!
     //asm volatile(  ""  :  :  : "r26", "r27" );
     //asm volatile (" movw r30, r26 \n" : : : "r30", "r31");
-    *rgb.r = r;
-    *rgb.g = g;
-    *rgb.b = b;
+    rgb[0] = r;
+    rgb[1] = g;
+    rgb[2] = b;
+}
+
+void hsv2rgb_rainbow( const CHSV& hsv, CRGB& rgb)
+{
+    uint8_t x[3];
+    hsv2rgb_rainbow(hsv, x);
+    rgb = x;
+}
+
+void hsv2rgb_rainbow( const CHSV& hsv, CRGBSmall& rgb)
+{
+    uint8_t x[3];
+    hsv2rgb_rainbow(hsv, x);
+    rgb = x;
 }
 
 

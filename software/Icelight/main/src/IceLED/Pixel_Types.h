@@ -2,11 +2,20 @@
 #include <stdint.h>
 #include "Colour_Helpers.h"
 #include "hsv2rgb.h"
+#include "lib8tion.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
+/// Pre-defined hue values for HSV objects
+typedef enum {
+    HUE_RED = 0,
+    HUE_ORANGE = 32,
+    HUE_YELLOW = 64,
+    HUE_GREEN = 96,
+    HUE_AQUA = 128,
+    HUE_BLUE = 160,
+    HUE_PURPLE = 192,
+    HUE_PINK = 224
+} HSVHue;
 
 struct CHSV {
     union {
@@ -26,30 +35,25 @@ struct CHSV {
 		uint8_t raw[3];
 	};
 
-    /// Array access operator to index into the chsv object
 	inline uint8_t& operator[] (uint8_t x) __attribute__((always_inline))
     {
         return raw[x];
     }
 
-    /// Array access operator to index into the chsv object
     inline const uint8_t& operator[] (uint8_t x) const __attribute__((always_inline))
     {
         return raw[x];
     }
 
-    /// default values are UNITIALIZED
     inline CHSV() __attribute__((always_inline))
     {
     }
 
-    /// allow construction from H, S, V
     inline CHSV( uint8_t ih, uint8_t is, uint8_t iv) __attribute__((always_inline))
         : h(ih), s(is), v(iv)
     {
     }
 
-    /// allow copy construction
     inline CHSV(const CHSV& rhs) __attribute__((always_inline))
     {
         h = rhs.h;
@@ -74,45 +78,50 @@ struct CHSV {
     }
 };
 
-struct CRGB_SMALL{
+struct CRGBSmall{
     uint8_t r;
     uint8_t g;
     uint8_t b;
 
-    inline CRGB_SMALL() __attribute__((always_inline))
+    inline CRGBSmall() __attribute__((always_inline))
     {
     }
     
-    inline CRGB_SMALL(uint8_t r_, uint8_t g_, uint8_t b_) __attribute__((always_inline))
+    inline CRGBSmall(uint8_t r_, uint8_t g_, uint8_t b_) __attribute__((always_inline))
     {
         r = r_;
         g = g_;
         b = b_;
     }
 
-    inline CRGB_SMALL(const uint32_t rgb) __attribute__((always_inline))
+    inline CRGBSmall(const uint32_t rgb) __attribute__((always_inline))
     {
         r = (rgb >> 16) & 0xFF;
         g = (rgb >> 8) & 0xFF;
         b = (rgb >> 0) & 0xFF;
     }
 
-    inline CRGB_SMALL(const IceLEDColourCorrection colourCorrection) __attribute__((always_inline))
+    inline CRGBSmall(const IceLEDColourCorrection colourCorrection) __attribute__((always_inline))
     {
         r = (colourCorrection >> 16) & 0xFF;
         g = (colourCorrection >> 8) & 0xFF;
         b = (colourCorrection >> 0) & 0xFF;
     }
 
-    inline CRGB_SMALL(const ColourTemperature colourTemperature) __attribute__((always_inline))
+    inline CRGBSmall(const ColourTemperature colourTemperature) __attribute__((always_inline))
     {
         r = (colourTemperature >> 16) & 0xFF;
         g = (colourTemperature >> 8) & 0xFF;
         b = (colourTemperature >> 0) & 0xFF;
     }
-
-    // allow assignment from 32-bit (really 24-bit) 0xRRGGBB color code
-	inline CRGB_SMALL& operator= (const uint32_t rgb) __attribute__((always_inline))
+    
+	inline CRGBSmall& operator= (const CHSV& rhs) __attribute__((always_inline))
+    {
+        hsv2rgb_rainbow( rhs, *this);
+        return *this;
+    }
+   
+	inline CRGBSmall& operator= (const uint32_t rgb) __attribute__((always_inline))
     {
         r = (rgb >> 16) & 0xFF;
         g = (rgb >> 8) & 0xFF;
@@ -120,8 +129,7 @@ struct CRGB_SMALL{
         return *this;
     }
 
-    // allow assignment from 32-bit (really 24-bit) 0xRRGGBB color code
-	inline CRGB_SMALL& operator= (const IceLEDColourCorrection colourCorrection) __attribute__((always_inline))
+	inline CRGBSmall& operator= (const IceLEDColourCorrection colourCorrection) __attribute__((always_inline))
     {
         r = (colourCorrection >> 16) & 0xFF;
         g = (colourCorrection >> 8) & 0xFF;
@@ -129,12 +137,39 @@ struct CRGB_SMALL{
         return *this;
     }
 
-    // allow assignment from 32-bit (really 24-bit) 0xRRGGBB color code
-	inline CRGB_SMALL& operator= (const ColourTemperature colourTemperature) __attribute__((always_inline))
+	inline CRGBSmall& operator= (const ColourTemperature colourTemperature) __attribute__((always_inline))
     {
         r = (colourTemperature >> 16) & 0xFF;
         g = (colourTemperature >> 8) & 0xFF;
         b = (colourTemperature >> 0) & 0xFF;
+        return *this;
+    }
+
+	inline CRGBSmall& operator= (const uint8_t* rgb) __attribute__((always_inline))
+    {
+        r = rgb[0];
+        g = rgb[1];
+        b = rgb[2];
+        return *this;
+    }
+    
+    inline CRGBSmall& operator+= (const CRGBSmall& rhs )
+    {
+        r = qadd8( r, rhs.r);
+        g = qadd8( g, rhs.g);
+        b = qadd8( b, rhs.b);
+        return *this;
+    }
+    
+    inline CRGBSmall& nscale8_video (uint8_t scaledown )
+    {
+        nscale8x3_video( r, g, b, scaledown);
+        return *this;
+    }
+    
+    inline CRGBSmall& nscale8 (uint8_t scaledown )
+    {
+        nscale8x3( r, g, b, scaledown);
         return *this;
     }
 };
@@ -162,6 +197,13 @@ struct CRGB {
         *b = *rhs.b;
     }
 
+    inline CRGB(const CRGBSmall& rhs) __attribute__((always_inline))
+    {
+        *r = rhs.r;
+        *g = rhs.g;
+        *b = rhs.b;
+    }
+
 	inline CRGB& operator= (const CRGB& rhs) __attribute__((always_inline))
     {
         *r = *rhs.r;
@@ -171,7 +213,7 @@ struct CRGB {
         return *this;
     }
 
-	inline CRGB& operator= (const CRGB_SMALL& rhs) __attribute__((always_inline))
+	inline CRGB& operator= (const CRGBSmall& rhs) __attribute__((always_inline))
     {
         *r = rhs.r;
         *g = rhs.g;
@@ -180,30 +222,11 @@ struct CRGB {
         return *this;
     }
 
-    // allow assignment from 32-bit (really 24-bit) 0xRRGGBB color code
 	inline CRGB& operator= (const uint32_t colorcode) __attribute__((always_inline))
     {
         *r = (colorcode >> 16) & 0xFF;
         *g = (colorcode >> 8) & 0xFF;
         *b = (colorcode >> 0) & 0xFF;
-        return *this;
-    }
-
-    // allow assignment from 32-bit (really 24-bit) 0xRRGGBB color code
-	inline CRGB& operator= (const IceLEDColourCorrection colourCorrection) __attribute__((always_inline))
-    {
-        *r = (colourCorrection >> 16) & 0xFF;
-        *g = (colourCorrection >> 8) & 0xFF;
-        *b = (colourCorrection >> 0) & 0xFF;
-        return *this;
-    }
-
-    // allow assignment from 32-bit (really 24-bit) 0xRRGGBB color code
-	inline CRGB& operator= (const ColourTemperature colourTemperature) __attribute__((always_inline))
-    {
-        *r = (colourTemperature >> 16) & 0xFF;
-        *g = (colourTemperature >> 8) & 0xFF;
-        *b = (colourTemperature >> 0) & 0xFF;
         return *this;
     }
 
@@ -214,13 +237,45 @@ struct CRGB {
         return *this;
     }
 
-    /// allow assignment from R, G, and B
+	inline CRGB& operator= (const IceLEDColourCorrection colourCorrection) __attribute__((always_inline))
+    {
+        *r = (colourCorrection >> 16) & 0xFF;
+        *g = (colourCorrection >> 8) & 0xFF;
+        *b = (colourCorrection >> 0) & 0xFF;
+        return *this;
+    }
+
+	inline CRGB& operator= (const ColourTemperature colourTemperature) __attribute__((always_inline))
+    {
+        *r = (colourTemperature >> 16) & 0xFF;
+        *g = (colourTemperature >> 8) & 0xFF;
+        *b = (colourTemperature >> 0) & 0xFF;
+        return *this;
+    }
+
+	inline CRGB& operator= (const uint8_t* rgb) __attribute__((always_inline))
+    {
+        *r = rgb[0];
+        *g = rgb[1];
+        *b = rgb[2];
+        return *this;
+    }
+
 	inline CRGB& SetRGB (uint8_t nr, uint8_t ng, uint8_t nb) __attribute__((always_inline))
     {
         *r = nr;
         *g = ng;
         *b = nb;
         return *this;
+    }
+
+    inline CRGBSmall ToCRGBSmall() __attribute__((always_inline))
+    {
+        CRGBSmall s;
+        s.r = *r;
+        s.g = *g;
+        s.b = *b;
+        return s;
     }
     
     inline CRGB& nscale8_video (uint8_t scaledown )
@@ -234,11 +289,6 @@ struct CRGB {
         nscale8x3( *r, *g, *b, scaledown);
         return *this;
     }
-    
-
-
-
-
 
     enum {
         AliceBlue=0xF0F8FF,
@@ -394,166 +444,5 @@ struct CRGB {
         FairyLight=0xFFE42D,
         // for no color correction
         FairyLightNCC=0xFF9D2A
-}   ;
+    };
 };
-
-
-/// Predefined RGB colors
-
-/*
-static const int ICE_COLOUR_COUNT = 148;
-static const uint32_t ICE_COLOR_ARRAY[ICE_COLOUR_COUNT] = {
-    AliceBlue,
-    Amethyst,
-    AntiqueWhite,
-    Aqua,
-    Aquamarine,
-    Azure,
-    Beige,
-    Bisque,
-    Black,
-    BlanchedAlmond,
-    Blue,
-    BlueViolet,
-    Brown,
-    BurlyWood,
-    CadetBlue,
-    Chartreuse,
-    Chocolate,
-    Coral,
-    CornflowerBlue,
-    Cornsilk,
-    Crimson,
-    Cyan,
-    DarkBlue,
-    DarkCyan,
-    DarkGoldenrod,
-    DarkGray,
-    DarkGrey,
-    DarkGreen,
-    DarkKhaki,
-    DarkMagenta,
-    DarkOliveGreen,
-    DarkOrange,
-    DarkOrchid,
-    DarkRed,
-    DarkSalmon,
-    DarkSeaGreen,
-    DarkSlateBlue,
-    DarkSlateGray,
-    DarkSlateGrey,
-    DarkTurquoise,
-    DarkViolet,
-    DeepPink,
-    DeepSkyBlue,
-    DimGray,
-    DimGrey,
-    DodgerBlue,
-    FireBrick,
-    FloralWhite,
-    ForestGreen,
-    Fuchsia,
-    Gainsboro,
-    GhostWhite,
-    Gold,
-    Goldenrod,
-    Gray,
-    Grey,
-    Green,
-    GreenYellow,
-    Honeydew,
-    HotPink,
-    IndianRed,
-    Indigo,
-    Ivory,
-    Khaki,
-    Lavender,
-    LavenderBlush,
-    LawnGreen,
-    LemonChiffon,
-    LightBlue,
-    LightCoral,
-    LightCyan,
-    LightGoldenrodYellow,
-    LightGreen,
-    LightGrey,
-    LightPink,
-    LightSalmon,
-    LightSeaGreen,
-    LightSkyBlue,
-    LightSlateGray,
-    LightSlateGrey,
-    LightSteelBlue,
-    LightYellow,
-    Lime,
-    LimeGreen,
-    Linen,
-    Magenta,
-    Maroon,
-    MediumAquamarine,
-    MediumBlue,
-    MediumOrchid,
-    MediumPurple,
-    MediumSeaGreen,
-    MediumSlateBlue,
-    MediumSpringGreen,
-    MediumTurquoise,
-    MediumVioletRed,
-    MidnightBlue,
-    MintCream,
-    MistyRose,
-    Moccasin,
-    NavajoWhite,
-    Navy,
-    OldLace,
-    Olive,
-    OliveDrab,
-    Orange,
-    OrangeRed,
-    Orchid,
-    PaleGoldenrod,
-    PaleGreen,
-    PaleTurquoise,
-    PaleVioletRed,
-    PapayaWhip,
-    PeachPuff,
-    Peru,
-    Pink,
-    Plaid,
-    Plum,
-    PowderBlue,
-    Purple,
-    Red,
-    RosyBrown,
-    RoyalBlue,
-    SaddleBrown,
-    Salmon,
-    SandyBrown,
-    SeaGreen,
-    Seashell,
-    Sienna,
-    Silver,
-    SkyBlue,
-    SlateBlue,
-    SlateGray,
-    SlateGrey,
-    Snow,
-    SpringGreen,
-    SteelBlue,
-    Tan,
-    Teal,
-    Thistle,
-    Tomato,
-    Turquoise,
-    Violet,
-    Wheat,
-    White,
-    WhiteSmoke,
-    Yellow,
-    YellowGreen,
-};
-*/
-
-#ifdef __cplusplus
-}
-#endif

@@ -2,7 +2,8 @@
 #include "esp_log.h"
 #include "esp_heap_caps.h"
 #include "lib8tion.h"
-//#define POWER_DEBUG_PRINT 1
+
+#define POWER_DEBUG_PRINT 1
 
 
 IRAM_ATTR static bool channelEndCallback(rmt_channel_handle_t channel, const rmt_tx_done_event_data_t *edata, void *user_data)
@@ -156,10 +157,10 @@ bool IceLED::Show(bool wait)
     }
     
     memcpy(_rmtPixels, _rawPixels, sizeof(uint8_t)*_pixelCount*3);
-    uint8_t bScale = calculate_max_brightness_for_power_mW(_brightness, 28000);
+    //uint8_t bScale = calculate_max_brightness_for_power_mW(_brightness, 28000);
     //printf("bScale: %i\n",bScale);
     
-    CRGB_SMALL adjustment = GetAdjustment(bScale);
+    CRGBSmall adjustment = GetAdjustment(_brightness);
     int count = _pixelCount*3;
     while(count){
         count--;
@@ -194,14 +195,14 @@ bool IceLED::Show(bool wait)
 
 
 /// Get the combined brightness/color adjustment for this controller
-CRGB_SMALL IceLED::GetAdjustment(uint8_t scale)
+CRGBSmall IceLED::GetAdjustment(uint8_t scale)
 {
     return ComputeAdjustment(scale, _colourCorrection, _colourTemperature);
 }
 
-CRGB_SMALL IceLED::ComputeAdjustment(uint8_t scale, const CRGB_SMALL & colorCorrection, const CRGB_SMALL & colourTemperature)
+CRGBSmall IceLED::ComputeAdjustment(uint8_t scale, const CRGBSmall & colorCorrection, const CRGBSmall & colourTemperature)
 {
-    CRGB_SMALL adj(0,0,0);
+    CRGBSmall adj(0,0,0);
     if(scale > 0){
         adj.r = ComputeSingleAdjustment(scale, colorCorrection.r, colourTemperature.r);
         adj.g = ComputeSingleAdjustment(scale, colorCorrection.g, colourTemperature.b);
@@ -222,12 +223,12 @@ uint8_t IceLED::ComputeSingleAdjustment(uint8_t scale, uint8_t colorCorrection, 
 
 uint8_t IceLED::calculate_max_brightness_for_power_mW( uint8_t target_brightness, uint32_t max_power_mW)
 {
-    //uint32_t total_mW = gMCU_mW;
-    //total_mW += calculate_unscaled_power_mW();
+    uint32_t total_mW = gMCU_mW;
+    total_mW += calculate_unscaled_power_mW();
 
-    uint32_t total_mW = calculate_unscaled_power_mW();
+    //uint32_t total_mW = calculate_unscaled_power_mW();
 #if POWER_DEBUG_PRINT == 1
-    printf("power demand at full brightness mW = %li\n", total_mW);
+    printf("\n----------------\npower demand at full brightness mW = %li\n", total_mW);
 #endif
 
     uint32_t requested_power_mW = ((uint32_t)total_mW * target_brightness) / 256;
@@ -255,7 +256,7 @@ uint8_t IceLED::calculate_max_brightness_for_power_mW( uint8_t target_brightness
     printf("recommended brightness # =  %i\n", recommended_brightness);
 
     uint32_t resultant_power_mW = (total_mW * recommended_brightness) / 256;
-    printf("resultant power demand mW =  %li\n", resultant_power_mW);
+    printf("resultant power demand mW =  %li\n\n", resultant_power_mW);
 #endif
 
 #if POWER_LED > 0
