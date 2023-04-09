@@ -9,9 +9,12 @@
 
 #include <cstdlib>
 #include <thread>
+#include <nvs_flash.h>
 #include "esp_log.h"
-#include "src/IceLED/IceLED.h"
 #include "driver/gpio.h"
+#include "src/IceLight_config.h"
+#include "src/IceLED/IceLED.h"
+#include "src/Preferences/Preferences.hpp"
 #include "src/IceLED/lib8tion.h"
 
 using namespace std;
@@ -176,9 +179,31 @@ void ChangePalettePeriodically()
     }
 }
 
+static const char *MAIN_TAG = "ICELIGHT";
+void Init_NVS()
+{
+    //Initialize NVS
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_LOGI(MAIN_TAG, "Init_NVS: nvs_flash_init returned %i\n", err);
+        ESP_LOGI(MAIN_TAG, "Erasing flash\n");
+        
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ESP_LOGI(MAIN_TAG, "Re initing flash\n");
 
+        esp_err_t ret = nvs_flash_init();
+        ESP_ERROR_CHECK(ret);
+        ESP_LOGI(MAIN_TAG, "Done rebuilding flash\n");
+        
+        Pref_RebuildPreferences();
+    }
+}
+
+
+int g_nvsCounter = 0;
 extern "C" void app_main(void)
 {
+    Init_NVS();
     printf("Start:\n");
     PrintMemUsage();
     gpio_reset_pin(BLINK_GPIO);
@@ -186,6 +211,23 @@ extern "C" void app_main(void)
     gpio_set_level(BLINK_GPIO, 0);
 
     IceLED IceLed;
+
+    int val = 0;
+    if(Pref_GetItem(IL_PREF_NS_GENERAL, IL_PREF_KEY_LAST_BRIGHTNESS, ICELIGHT_DEFAULT_BRIGHTNESS, val) != ESP_OK){
+        ESP_LOGE(MAIN_TAG, "Something has gone horribly wrong\n");
+    } else {
+        ESP_LOGI(MAIN_TAG, "Brightness value: %i\n", val);
+        g_nvsCounter = val;
+    }
+
+    bool bVal = false;
+    if(Pref_GetItem(IL_PREF_NS_WIFI, IL_PREF_KEY_STA_ENABLED, false, bVal) != ESP_OK){
+        ESP_LOGE(MAIN_TAG, "Something has gone horribly wrong\n");
+    } else {
+        ESP_LOGI(MAIN_TAG, "STA connected: %s\n", B_TO_S(bVal));
+    }
+    g_nvsCounter++;
+    Pref_SetItem(IL_PREF_NS_GENERAL, IL_PREF_KEY_LAST_BRIGHTNESS, g_nvsCounter);
 
     uint16_t numLeds = 100;
     int numChannels = 4;

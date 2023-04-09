@@ -1,0 +1,9 @@
+
+const char *IL_PREF_NS_GENERAL = "ICELIGHT";
+const char *IL_PREF_KEY_DEVICE_NAME = "DNAME";
+const char *IL_PREF_KEY_LAST_BRIGHTNESS = "BNESS";
+const char *IL_PREF_KEY_LAST_ACTION = "LACTION";
+const char *IL_PREF_KEY_LAST_ACTION_VALUE = "LAVALUE";
+
+const char *IL_PREF_NS_WIFI = "WIFI";
+const char *IL_PREF_KEY_STA_ENABLED = "WIFI_STA";
