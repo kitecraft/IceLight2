@@ -114,6 +114,9 @@ esp_err_t Pref_GetSoftAPPassword(char *val, size_t len)
 }
 esp_err_t Pref_SetSoftAPPassword(const char *val)
 {
+    if(strlen(val) < 8){
+        return ESP_FAIL;
+    }
     return Pref_SetString(IL_PREF_KEY_AP_PASSWORD, val);
 }
 
@@ -124,7 +127,7 @@ uint8_t Pref_GetDefaultBrightness(){
     Pref_GetItem(IL_PREF_KEY_LAST_BRIGHTNESS, CONFIG_ICELIGHT_DEFAULT_BRIGHTNESS, val);
     return val;
 }
-void Pref_SetDefaultBrightness(int &val){
+void Pref_SetDefaultBrightness(int val){
     Pref_SetItem(IL_PREF_KEY_LAST_BRIGHTNESS, val);
 }
 

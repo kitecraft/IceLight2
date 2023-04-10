@@ -16,9 +16,8 @@ extern "C" {
 
 
 static const char* NETWORK_TAG = "IceNetwork";
-#define MAX_ESP_NETIFS 2
+#define MAX_ESP_NETIFS 3
 static esp_netif_t* esp_netifs[MAX_ESP_NETIFS] = {nullptr, nullptr};
-static int s_retry_num = 0;
 
 static size_t _wifi_strncpy(char * dst, const char * src, size_t dst_len){
     if(!dst || !src || !dst_len){
@@ -55,6 +54,35 @@ esp_err_t SetHostname(esp_interface_t interface, const char * hostname){
 	return ESP_FAIL;
 }
 
+struct IPAddress{
+    union {
+        uint8_t bytes[4];  // IPv4 address
+        uint32_t dword;
+    };
+    IPAddress()
+    {
+        dword = 0;
+    }
+    IPAddress(uint32_t address)
+    {
+        dword = address;
+    }
+    void ToString(char *val) const
+    {
+        sprintf(val,"%u.%u.%u.%u", bytes[0], bytes[1], bytes[2], bytes[3]);
+    }
+};
+
+IPAddress SoftAPIP()
+{
+	esp_netif_ip_info_t ip;
+    if(esp_netif_get_ip_info(esp_netifs[ESP_IF_WIFI_AP], &ip) != ESP_OK){
+        ESP_LOGE(NETWORK_TAG, "Failed to get ip");
+    	return IPAddress();
+    }
+    return IPAddress(ip.ip.addr);
+}
+
 static esp_err_t InitSoftAP()
 {
     esp_err_t err;
@@ -62,14 +90,13 @@ static esp_err_t InitSoftAP()
         //do a disconnect here
     }
 
-    Pref_SetSoftAPPassword("");
-
     char deviceName[CONFIG_ICELIGHT_MAX_STRING_LEN] = {'\0'};
     Pref_GetDeviceName(deviceName, CONFIG_ICELIGHT_MAX_STRING_LEN);
 
     bool validPassword = true;
     char softApPassword[CONFIG_ICELIGHT_MAX_STRING_LEN] = {'\0'};
     Pref_GetSoftAPPassword(softApPassword, CONFIG_ICELIGHT_MAX_STRING_LEN);
+
     if(strlen(softApPassword) == 0){
         validPassword = false;
     }
@@ -127,8 +154,11 @@ static esp_err_t InitSoftAP()
         return err;
     }
 
-    ESP_LOGI(NETWORK_TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d",
-             deviceName, softApPassword, CONFIG_ICENETWORK_SOFTAP_DEFAULT_CHANNEL);
+    IPAddress ipa = SoftAPIP();
+    char ipAddress[17] = {'\0'};
+    ipa.ToString(ipAddress);
+    ESP_LOGI(NETWORK_TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d ip:%s\n",
+             deviceName, softApPassword, CONFIG_ICENETWORK_SOFTAP_DEFAULT_CHANNEL, ipAddress);
              
     return ESP_OK;
 }
@@ -150,7 +180,10 @@ static void StartNetwork()
     char deviceName[CONFIG_ICELIGHT_MAX_STRING_LEN] = {'\0'};
     Pref_GetDeviceName(deviceName, CONFIG_ICELIGHT_MAX_STRING_LEN);
     printf("Got device name: %s\n", deviceName);
-    //esp_netif_set_hostname()
+    
+    if(Pref_SetSoftAPPassword("Test1234") != ESP_OK){
+            ESP_LOGE(NETWORK_TAG, "Failed to set password\n" );
+    }
     
 	esp_wifi_set_ps(WIFI_PS_NONE);
     if(Pref_GetSTAEnabled()){

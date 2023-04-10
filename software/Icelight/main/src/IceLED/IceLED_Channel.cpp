@@ -147,6 +147,8 @@ IceLED_Channel* CreateIceLED_Channel(iceled_channel_config_t config_)
         .mem_block_symbols = 128, // increase the block size can make the LED less flickering
         .trans_queue_depth = 8, // set the number of transactions that can be pending in the background
     };
+    //tx_chan_config.flags.io_od_mode = 0;
+
     esp_err_t err = rmt_new_tx_channel(&tx_chan_config, &newChannel->rmt_channel);
     if(err != ESP_OK){
         ESP_LOGE(ICELED_CHANNEL_TAG, "Failed to create TX channel");

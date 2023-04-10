@@ -117,12 +117,23 @@ void ChangePalettePeriodically()
 
 
 int g_nvsCounter = 0;
+#define GPIO_BIT_MASK ( (1ULL<<GPIO_NUM_5) | (1ULL<<GPIO_NUM_23) | (1ULL<<GPIO_NUM_25)  | (1ULL<<GPIO_NUM_21) | (1ULL<<GPIO_NUM_22) )
 
 static void LedTask(void *pvParameters)
 {
+    /*
+    gpio_config_t io_conf;
+	io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    io_conf.pull_down_en = GPIO_PULLDOWN_ENABLE;
+    io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+    io_conf.pin_bit_mask = GPIO_BIT_MASK;
+	gpio_config(&io_conf);
+    */
     gpio_reset_pin(BLINK_GPIO);
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
     gpio_set_level(BLINK_GPIO, 0);
+    gpio_set_pull_mode(BLINK_GPIO, GPIO_PULLDOWN_ONLY);
     
     IceLED IceLed;
 
@@ -147,7 +158,7 @@ static void LedTask(void *pvParameters)
 */
 
 
-    uint16_t numLeds = 100;
+    uint16_t numLeds = 450;
     int numChannels = 4;
     iceled_config_t configArray[numChannels];
 

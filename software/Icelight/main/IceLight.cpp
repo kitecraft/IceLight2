@@ -39,7 +39,13 @@ void Init_NVS()
     }
 }
 
-
+void Reset()
+{
+    Pref_SetDefaultBrightness(CONFIG_ICELIGHT_DEFAULT_BRIGHTNESS);
+    Pref_SetDeviceName(CONFIG_ICELIGHT_DEVICE_NAME);
+    Pref_SetSoftAPPassword("");
+    Pref_SetSTAEnabled(false);
+}
 
 extern "C" void app_main(void)
 {
@@ -47,9 +53,9 @@ extern "C" void app_main(void)
     printf("Start:\n");
     PrintMemUsage();
 
+    StartNetwork();
     TaskHandle_t xHandle = NULL;
     xTaskCreatePinnedToCore( LedTask, "LedTask", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle,  0);
-    StartNetwork();
     
     while (true) {
         
