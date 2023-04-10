@@ -33,7 +33,7 @@ public:
     }
 
     // Reference to the n'th CRGB pixel
-    CRGB &operator[](int x) { return pixels[x % pixelCount]; }
+    CRGB &operator[](uint16_t x) {if(x>pixelCount)x=x%pixelCount; return pixels[x]; }
 
     void FadeToBlackBy(uint8_t fadeBy) {
         nscale8( pixels, pixelCount, 255 - fadeBy);

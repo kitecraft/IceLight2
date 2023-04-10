@@ -17,68 +17,14 @@
 #include "src/Preferences/Preferences.hpp"
 #include "src/IceLED/lib8tion.h"
 
+#include "src/IceNetwork/IceNetwork.h"
+#include "src/Utilities/MemUsage.h"
+
 using namespace std;
 static gpio_num_t BLINK_GPIO = GPIO_NUM_5;
 const TickType_t xDelay = (1000/20) / portTICK_PERIOD_MS;
 
 const int g_fps = 1000/40;
-
-uint32_t getHeapSize(void)
-{
-    multi_heap_info_t info;
-    heap_caps_get_info(&info, MALLOC_CAP_INTERNAL);
-    return info.total_free_bytes + info.total_allocated_bytes;
-}
-
-uint32_t getFreeHeap(void)
-{
-    return heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
-}
-
-uint32_t getMinFreeHeap(void)
-{
-    return heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL);
-}
-
-uint32_t getMaxAllocHeap(void)
-{
-    return heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL);
-}
-
-uint32_t getPsramSize(void)
-{
-    multi_heap_info_t info;
-    heap_caps_get_info(&info, MALLOC_CAP_SPIRAM);
-    return info.total_free_bytes + info.total_allocated_bytes;
-}
-
-uint32_t getFreePsram(void)
-{
-    return heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
-}
-
-uint32_t getMinFreePsram(void)
-{
-    return heap_caps_get_minimum_free_size(MALLOC_CAP_SPIRAM);
-}
-
-uint32_t getMaxAllocPsram(void)
-{
-    return heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM);
-}
-
-void PrintMemUsage()
-{
-    printf("Heap size: %li\n", getHeapSize());
-    printf("Free heap: %li\n", getFreeHeap());
-    printf("Used heap: %li\n", getHeapSize() - getFreeHeap());
-    printf("Min free heap: %li\n", getMinFreeHeap());
-
-    printf("PSRam size: %li\n", getPsramSize());
-    printf("Free PSRam: %li\n", getFreePsram());
-    printf("Used PSRam: %li\n", getPsramSize() - getFreePsram());
-    printf("Min free PSRam: %li\n", getMinFreePsram());
-}
 
 
 
@@ -104,7 +50,7 @@ const Palette16 myRedWhiteBluePalette_p =
     CRGB::Black
 };
 
-CRGBPalette16 currentPalette;
+CRGBPalette256 currentPalette;
 
 TBlendType    currentBlending = LINEARBLEND;
 // This function fills the palette with totally random colors.
@@ -149,7 +95,7 @@ void SetupPurpleAndGreenPalette()
 static int palletIndex = 0;
 void ChangePalettePeriodically()
 {
-    static int secondHand = 0;
+    //static int secondHand = 0;
     
     EVERY_N_SECONDS_I(pc, 5){
         currentPalette = gGradientPalettes[palletIndex];
@@ -210,10 +156,13 @@ extern "C" void app_main(void)
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
     gpio_set_level(BLINK_GPIO, 0);
 
+    StartNetwork();
+
     IceLED IceLed;
 
+/*
     int val = 0;
-    if(Pref_GetItem(IL_PREF_NS_GENERAL, IL_PREF_KEY_LAST_BRIGHTNESS, ICELIGHT_DEFAULT_BRIGHTNESS, val) != ESP_OK){
+    if(Pref_GetDefaultBrightness(val) != ESP_OK){
         ESP_LOGE(MAIN_TAG, "Something has gone horribly wrong\n");
     } else {
         ESP_LOGI(MAIN_TAG, "Brightness value: %i\n", val);
@@ -221,13 +170,16 @@ extern "C" void app_main(void)
     }
 
     bool bVal = false;
-    if(Pref_GetItem(IL_PREF_NS_WIFI, IL_PREF_KEY_STA_ENABLED, false, bVal) != ESP_OK){
+    if(Pref_GetSTAEnabled(bVal) != ESP_OK){
         ESP_LOGE(MAIN_TAG, "Something has gone horribly wrong\n");
     } else {
         ESP_LOGI(MAIN_TAG, "STA connected: %s\n", B_TO_S(bVal));
     }
     g_nvsCounter++;
-    Pref_SetItem(IL_PREF_NS_GENERAL, IL_PREF_KEY_LAST_BRIGHTNESS, g_nvsCounter);
+    Pref_SetDefaultBrightness(g_nvsCounter);
+    Pref_SetSTAEnabled(!bVal);
+*/
+
 
     uint16_t numLeds = 100;
     int numChannels = 4;
@@ -300,10 +252,10 @@ extern "C" void app_main(void)
     IceLED_Segment segment1 = IceLed.GetSegment(offSet, length);
     offSet += numLeds;
     IceLED_Segment segment2 = IceLed.GetSegment(offSet, length);
-    offSet += numLeds;
-    IceLED_Segment segment3 = IceLed.GetSegment(offSet, length);
-    offSet += numLeds;
-    IceLED_Segment segment4 = IceLed.GetSegment(offSet, length);
+    //offSet += numLeds;
+    //IceLED_Segment segment3 = IceLed.GetSegment(offSet, length);
+    //offSet += numLeds;
+    //IceLED_Segment segment4 = IceLed.GetSegment(offSet, length);
     
     /*
     offSet += numLeds;
@@ -344,10 +296,10 @@ extern "C" void app_main(void)
 
     IceLed.Show();
 
-    bool curr = true;
+    //bool curr = true;
 
-    static uint8_t hue;
-    int currPixel = 0;
+    //static uint8_t hue;
+    //int currPixel = 0;
     
     //currentPalette = PartyColors_p;
     TBlendType currentBlending = LINEARBLEND;

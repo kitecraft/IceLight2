@@ -157,8 +157,9 @@ bool IceLED::Show(bool wait)
     }
     
     memcpy(_rmtPixels, _rawPixels, sizeof(uint8_t)*_pixelCount*3);
+
+    //NOT gonna use the max power stuff for now.  It's wayyyyy wrong
     //uint8_t bScale = calculate_max_brightness_for_power_mW(_brightness, 28000);
-    //printf("bScale: %i\n",bScale);
     
     CRGBSmall adjustment = GetAdjustment(_brightness);
     int count = _pixelCount*3;

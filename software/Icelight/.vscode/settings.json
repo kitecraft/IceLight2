@@ -5,7 +5,8 @@
         "random": "cpp",
         "*.orig": "cpp",
         "chrono": "cpp",
-        "cstddef": "cpp"
+        "cstddef": "cpp",
+        "typeinfo": "cpp"
     },
     "idf.openOcdConfigs": [
         "board/esp32-wrover-kit-3.3v.cfg"
