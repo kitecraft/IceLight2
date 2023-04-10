@@ -152,6 +152,7 @@ static void StartNetwork()
     printf("Got device name: %s\n", deviceName);
     //esp_netif_set_hostname()
     
+	esp_wifi_set_ps(WIFI_PS_NONE);
     if(Pref_GetSTAEnabled()){
         
     } else {
