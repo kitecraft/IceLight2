@@ -39,7 +39,8 @@ const Palette16 myRedWhiteBluePalette_p =
     CRGB::Black
 };
 
-CRGBPalette256 currentPalette;
+static int palletIndex = 0;
+CRGBPalette256 currentPalette = gGradientPalettes[palletIndex];
 
 TBlendType    currentBlending = LINEARBLEND;
 // This function fills the palette with totally random colors.
@@ -81,19 +82,18 @@ void SetupPurpleAndGreenPalette()
                                    purple, purple, black,  black );
 }
 
-static int palletIndex = 0;
 void ChangePalettePeriodically()
 {
     //static int secondHand = 0;
     
     EVERY_N_SECONDS_I(pc, 5){
-        currentPalette = gGradientPalettes[palletIndex];
-        printf("Palett index: %i\n", palletIndex);
         palletIndex++;
+        printf("Palett index: %i\n", palletIndex);
         if(palletIndex == GradientPaletteCount)
         {
             palletIndex = 0;
         }
+        currentPalette = gGradientPalettes[palletIndex];
         /*
         if( secondHand ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
         if( secondHand == 10)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
@@ -158,7 +158,7 @@ static void LedTask(void *pvParameters)
 */
 
 
-    uint16_t numLeds = 450;
+    uint16_t numLeds = 100;
     int numChannels = 4;
     iceled_config_t configArray[numChannels];
 
@@ -253,7 +253,7 @@ static void LedTask(void *pvParameters)
     segment1.ClearLedData();
     segment2.ClearLedData();
     //FillSolid(segment1.pixels, segment1.pixelCount, CRGB::Black);
-    FillSolid(segment2.pixels, segment2.pixelCount, CRGB::Azure);
+    //FillSolid(segment2.pixels, segment2.pixelCount, CRGB::Azure);
     
     //for(uint16_t i = 0; i < segment1.size(); i++){
     //    segment1[i] = CRGB::White;
@@ -383,12 +383,14 @@ static void LedTask(void *pvParameters)
             
             //currentPalette = gGradientPalettes[40];
             segment1.ClearLedData();
+            segment2.ClearLedData();
             
             uint8_t brightness = 255;
             colorIndex = 0;
+            float increment = 256/numLeds;
             for( int i = 0; i < segment1.pixelCount; ++i) {
                 CRGBSmall colour = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
-                colorIndex += 3;
+                colorIndex = i * increment;
                 segment1.pixels[i] = colour;
                 segment2.pixels[i] = colour;
             }

@@ -56,7 +56,6 @@ esp_err_t Pref_SetItem(const char *key, T value) {
 
 esp_err_t Pref_GetString(const char *key, char *val, size_t len)
 {
-    memset(val, '\0', len);
     esp_err_t err;
     std::unique_ptr<nvs::NVSHandle> handle = nvs::open_nvs_handle(IL_PREF_NAMESPACE_GENERAL, NVS_READONLY, &err);
     if (err != ESP_OK) {
@@ -64,7 +63,7 @@ esp_err_t Pref_GetString(const char *key, char *val, size_t len)
     } else {
         size_t l;
         handle->get_item_size(nvs::ItemType::SZ, key, l);
-        if(l == 0){
+        if(l == 0 || l > len){
             return ESP_FAIL;
         }
         err = handle->get_string(key, val, len);
@@ -77,8 +76,8 @@ esp_err_t Pref_GetString(const char *key, const char* def, char *val, size_t len
     esp_err_t err = Pref_GetString(key, val, len);
     if(err != ESP_OK){
         int s = strlen(def);
-        int l = s > len ? len : s;
-        strncpy(val, def, l);
+        int l = s >= len ? len : s + 1;
+        memcpy(val, def, l);
     }
     return ESP_OK;
 }
@@ -118,6 +117,30 @@ esp_err_t Pref_SetSoftAPPassword(const char *val)
         return ESP_FAIL;
     }
     return Pref_SetString(IL_PREF_KEY_AP_PASSWORD, val);
+}
+
+esp_err_t Pref_GetStaSSID(char *val, size_t len)
+{
+    return Pref_GetString(IL_PREF_KEY_STA_SSID, "", val, len);
+}
+esp_err_t Pref_SetStaSSID(const char *val)
+{
+    if(strlen(val) < 8){
+        return ESP_FAIL;
+    }
+    return Pref_SetString(IL_PREF_KEY_STA_SSID, val);
+}
+
+esp_err_t Pref_GetStaSSIDPassword(char *val, size_t len)
+{
+    return Pref_GetString(IL_PREF_KEY_STA_SSID_PASSWORD, "", val, len);
+}
+esp_err_t Pref_SetStaSSIDPassword(const char *val)
+{
+    if(strlen(val) < 8){
+        return ESP_FAIL;
+    }
+    return Pref_SetString(IL_PREF_KEY_STA_SSID_PASSWORD, val);
 }
 
 

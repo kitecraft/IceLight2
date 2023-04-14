@@ -53,10 +53,10 @@ extern "C" void app_main(void)
     printf("Start:\n");
     PrintMemUsage();
 
-    StartNetwork();
     TaskHandle_t xHandle = NULL;
     xTaskCreatePinnedToCore( LedTask, "LedTask", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle,  0);
     
+    StartNetwork();
     while (true) {
         
         vTaskDelay(TickType_t(1));

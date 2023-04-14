@@ -93,9 +93,11 @@ bool IceLED::ConfigureIceLed(iceled_config_t* configArray, uint8_t configArrayCo
     
     //_rawPixels holds the actual G, R, and B uint8_t variables behind the CRGB pixels
     _rawPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
+    //_rawPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT);
 
     //_rmtPixels is the buffers used by the rmt channel encoders. 
     _rmtPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
+    //_rmtPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT);
 
     int rawPixelCount = 0;
     for(int i=0; i< _pixelCount; i++){
