@@ -91,6 +91,7 @@ extern const uint8_t blink_red_gp[];
 extern const uint8_t red_shift_gp[];
 extern const uint8_t red_tide_gp[];
 extern const uint8_t candy2_gp[];
+extern const uint8_t xmas_23_gp[];
 
 extern const RGBGradientPalettePtr gGradientPalettes[];
-const int GradientPaletteCount = 58;
+const int GradientPaletteCount = 59;

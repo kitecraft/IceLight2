@@ -14,6 +14,7 @@
 #include "IceLedTask.h"
 
 #include "src/IceNetwork/IceNetwork.h"
+#include "src/IceServer/IceServer.h"
 #include "src/Utilities/MemUsage.h"
 
 using namespace std;
@@ -57,6 +58,7 @@ extern "C" void app_main(void)
     xTaskCreatePinnedToCore( LedTask, "LedTask", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle,  0);
     
     StartNetwork();
+    StartIceServer();
     while (true) {
         
         vTaskDelay(TickType_t(1));

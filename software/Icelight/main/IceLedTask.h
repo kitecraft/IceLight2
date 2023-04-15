@@ -379,6 +379,7 @@ static void LedTask(void *pvParameters)
             
             //segment2.FadeToBlackBy(1);
 
+            
             ChangePalettePeriodically();
             
             //currentPalette = gGradientPalettes[40];

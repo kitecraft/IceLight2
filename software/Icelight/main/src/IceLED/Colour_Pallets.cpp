@@ -978,68 +978,83 @@ const uint8_t candy2_gp[] = {
   211,  39, 33, 34,
   255,   1,  1,  1};
 
+  
+// Gradient palette "xmas_23_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/ma/xmas/tn/xmas_23.png.index.html
+// converted for FastLED with gammas (2.6, 2.2, 2.5)
+// Size: 24 bytes of program space.
+
+const uint8_t xmas_23_gp[] {
+    0, 121,  0,  0,
+   53,   0, 12,  0,
+  112, 121,  0,  0,
+  165,   0, 12,  0,
+  209, 121,  0,  0,
+  255,   0, 12,  0};
+
 
 // Single array of defined cpt-city color palettes.
 // This will let us programmatically choose one based on
 // a number, rather than having to activate each explicitly
 // by name every time.
 const RGBGradientPalettePtr gGradientPalettes[] = {
-  Sunset_Real_gp,               //13-00 Sunset
-  es_rivendell_15_gp,           //14-01 Rivendell
-  es_ocean_breeze_036_gp,       //15-02 Breeze
-  rgi_15_gp,                    //16-03 Red & Blue
-  retro2_16_gp,                 //17-04 Yellowout
-  Analogous_1_gp,               //18-05 Analogous
-  es_pinksplash_08_gp,          //19-06 Splash
-  Sunset_Yellow_gp,             //20-07 Pastel
-  Another_Sunset_gp,            //21-08 Sunset2
-  Beech_gp,                     //22-09 Beech
-  es_vintage_01_gp,             //23-10 Vintage
-  departure_gp,                 //24-11 Departure
-  es_landscape_64_gp,           //25-12 Landscape
-  es_landscape_33_gp,           //26-13 Beach
-  rainbowsherbet_gp,            //27-14 Sherbet
-  gr65_hult_gp,                 //28-15 Hult
-  gr64_hult_gp,                 //29-16 Hult64
-  GMT_drywet_gp,                //30-17 Drywet
-  ib_jul01_gp,                  //31-18 Jul
-  es_vintage_57_gp,             //32-19 Grintage
-  ib15_gp,                      //33-20 Rewhi
-  Tertiary_01_gp,               //34-21 Tertiary
-  lava_gp,                      //35-22 Fire
-  fierce_ice_gp,                //36-23 Icefire
-  Colorfull_gp,                 //37-24 Cyane
-  Pink_Purple_gp,               //38-25 Light Pink
-  es_autumn_19_gp,              //39-26 Autumn
-  BlacK_Blue_Magenta_White_gp,  //40-27 Magenta
-  BlacK_Magenta_Red_gp,         //41-28 Magred
-  BlacK_Red_Magenta_Yellow_gp,  //42-29 Yelmag
-  Blue_Cyan_Yellow_gp,          //43-30 Yelblu
-  Orange_Teal_gp,               //44-31 Orange & Teal
-  Tiamat_gp,                    //45-32 Tiamat
-  April_Night_gp,               //46-33 April Night
-  Orangery_gp,                  //47-34 Orangery
-  C9_gp,                        //48-35 C9
-  Sakura_gp,                    //49-36 Sakura
-  Aurora_gp,                    //50-37 Aurora
-  Atlantica_gp,                 //51-38 Atlantica
-  C9_2_gp,                      //52-39 C9 2
-  C9_new_gp,                    //53-40 C9 New
-  temperature_gp,               //54-41 Temperature
-  Aurora2_gp,                   //55-42 Aurora 2
-  retro_clown_gp,               //56-43 Retro Clown
-  candy_gp,                     //57-44 Candy
-  toxy_reaf_gp,                 //58-45 Toxy Reaf
-  fairy_reaf_gp,                //59-46 Fairy Reaf
-  semi_blue_gp,                 //60-47 Semi Blue
-  pink_candy_gp,                //61-48 Pink Candy
-  red_reaf_gp,                  //62-49 Red Reaf
-  aqua_flash_gp,                //63-50 Aqua Flash
-  yelblu_hot_gp,                //64-51 Yelblu Hot
-  lite_light_gp,                //65-52 Lite Light
-  red_flash_gp,                 //66-53 Red Flash
-  blink_red_gp,                 //67-54 Blink Red
-  red_shift_gp,                 //68-55 Red Shift
-  red_tide_gp,                  //69-56 Red Tide
-  candy2_gp                     //70-57 Candy2
+  Sunset_Real_gp,
+  es_rivendell_15_gp,
+  es_ocean_breeze_036_gp,
+  rgi_15_gp,
+  retro2_16_gp,
+  Analogous_1_gp,
+  es_pinksplash_08_gp,
+  Sunset_Yellow_gp,
+  Another_Sunset_gp,
+  Beech_gp,
+  es_vintage_01_gp,
+  departure_gp,
+  es_landscape_64_gp,
+  es_landscape_33_gp,
+  rainbowsherbet_gp,
+  gr65_hult_gp,
+  gr64_hult_gp,
+  GMT_drywet_gp,
+  ib_jul01_gp,
+  es_vintage_57_gp,
+  ib15_gp,
+  Tertiary_01_gp,
+  lava_gp,
+  fierce_ice_gp,
+  Colorfull_gp,
+  Pink_Purple_gp,
+  es_autumn_19_gp,
+  BlacK_Blue_Magenta_White_gp,
+  BlacK_Magenta_Red_gp,
+  BlacK_Red_Magenta_Yellow_gp,
+  Blue_Cyan_Yellow_gp,
+  Orange_Teal_gp,
+  Tiamat_gp,
+  April_Night_gp,
+  Orangery_gp,
+  C9_gp,
+  Sakura_gp,
+  Aurora_gp,
+  Atlantica_gp,
+  C9_2_gp,
+  C9_new_gp,
+  temperature_gp,
+  Aurora2_gp,
+  retro_clown_gp,
+  candy_gp,
+  toxy_reaf_gp,
+  fairy_reaf_gp,
+  semi_blue_gp,
+  pink_candy_gp,
+  red_reaf_gp,
+  aqua_flash_gp,
+  yelblu_hot_gp,
+  lite_light_gp,
+  red_flash_gp,
+  blink_red_gp,
+  red_shift_gp,
+  red_tide_gp,
+  candy2_gp,
+  xmas_23_gp,
 };
