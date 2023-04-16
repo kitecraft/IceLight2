@@ -90,7 +90,8 @@ bool IceLED::ConfigureIceLed(iceled_config_t* configArray, uint8_t configArrayCo
     _pixelCount = totalLedCount;
     ESP_LOGI(ICELED_TAG, "Pixel count is: %i, %i",_pixelCount, totalLedCount);
     _pixels =  (CRGB*)heap_caps_calloc(_pixelCount, sizeof(CRGB), MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
-    
+    //_pixels =  (CRGB*)heap_caps_calloc(_pixelCount, sizeof(CRGB), MALLOC_CAP_8BIT);
+
     //_rawPixels holds the actual G, R, and B uint8_t variables behind the CRGB pixels
     _rawPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
     //_rawPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT);

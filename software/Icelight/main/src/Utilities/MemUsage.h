@@ -55,7 +55,7 @@ uint32_t getMaxAllocPsram(void)
 
 void PrintMemUsage()
 {
-    printf("Heap size: %li\n", getHeapSize());
+    printf("\nHeap size: %li\n", getHeapSize());
     printf("Free heap: %li\n", getFreeHeap());
     printf("Used heap: %li\n", getHeapSize() - getFreeHeap());
     printf("Min free heap: %li\n", getMinFreeHeap());
@@ -63,7 +63,7 @@ void PrintMemUsage()
     printf("PSRam size: %li\n", getPsramSize());
     printf("Free PSRam: %li\n", getFreePsram());
     printf("Used PSRam: %li\n", getPsramSize() - getFreePsram());
-    printf("Min free PSRam: %li\n", getMinFreePsram());
+    printf("Min free PSRam: %li\n\n", getMinFreePsram());
 }
 
 

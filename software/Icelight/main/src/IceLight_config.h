@@ -5,9 +5,8 @@
 
 #define B_TO_S(b)(b ? "true" : "false")
 
-const char* CONFIG_ICELIGHT_DEVICE_NAME = "IceLight";
+#define CONFIG_ICELIGHT_DEVICE_NAME "IceLight"
 #define CONFIG_ICELIGHT_MAX_STRING_LEN 32
-
 
 #define STACK_SIZE  8192    //Task stack size
 
@@ -18,4 +17,11 @@ const char* CONFIG_ICELIGHT_DEVICE_NAME = "IceLight";
 
 //LED centered
 #define CONFIG_ICELIGHT_DEFAULT_BRIGHTNESS 64
+
+//IceFS - FatFS
+#define FFS_PARTITION_LABEL "storage"
+#define FFS_BASE_PATH "/ffs"
+
+//IceServer
+#define WWW_FILE_PATH "/html"
 

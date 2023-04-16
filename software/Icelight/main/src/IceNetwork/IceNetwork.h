@@ -15,6 +15,7 @@ extern "C" {
 #include "esp_log.h"
 #include "../IceLight_config.h"
 #include "../Preferences/Preferences.hpp"
+#include "../IceServer/IceServer.h"
 
 
 static const char* NETWORK_TAG = "IceNetwork";
@@ -61,6 +62,7 @@ static void IceNetworkEventHandler(void* arg, esp_event_base_t event_base,
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         ESP_LOGI(NETWORK_TAG, "**** got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         g_retryNum = 0;
+        StartIceServer();
         //xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
     }
 
@@ -180,7 +182,8 @@ static esp_err_t InitSoftAP()
         ESP_LOGE(NETWORK_TAG, "Failed to start WifiAP");
         return err;
     }
-
+    StartIceServer();
+    
     IPAddress ipa = SoftAPIP();
     char ipAddress[17] = {'\0'};
     ipa.ToString(ipAddress);

@@ -16,6 +16,7 @@
 #include "src/IceNetwork/IceNetwork.h"
 #include "src/IceServer/IceServer.h"
 #include "src/Utilities/MemUsage.h"
+#include "src/IceFS/IceFS.h"
 
 using namespace std;
 
@@ -50,15 +51,20 @@ void Reset()
 
 extern "C" void app_main(void)
 {
-    Init_NVS();
-    printf("Start:\n");
+    printf("\n*** Starting the whole thing now:\n");
     PrintMemUsage();
+
+    Init_NVS();
+    if(InitFS() != ESP_OK){
+        ESP_LOGI(MAIN_TAG, "Failed to init filesystem.  Spinning...");
+        while(true){vTaskDelay(TickType_t(1));}
+    }
 
     TaskHandle_t xHandle = NULL;
     xTaskCreatePinnedToCore( LedTask, "LedTask", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle,  0);
     
     StartNetwork();
-    StartIceServer();
+    //StartIceServer();
     while (true) {
         
         vTaskDelay(TickType_t(1));
