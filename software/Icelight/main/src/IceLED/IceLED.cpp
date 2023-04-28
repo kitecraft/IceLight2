@@ -6,7 +6,7 @@
 #define POWER_DEBUG_PRINT 1
 
 
-IRAM_ATTR static bool channelEndCallback(rmt_channel_handle_t channel, const rmt_tx_done_event_data_t *edata, void *user_data)
+static bool IRAM_ATTR channelEndCallback(rmt_channel_handle_t channel, const rmt_tx_done_event_data_t *edata, void *user_data)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     ChannelCBData_t* cbData = (ChannelCBData_t*) user_data;
@@ -97,7 +97,7 @@ bool IceLED::ConfigureIceLed(iceled_config_t* configArray, uint8_t configArrayCo
     //_rawPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT);
 
     //_rmtPixels is the buffers used by the rmt channel encoders. 
-    _rmtPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
+    _rmtPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT);
     //_rmtPixels =  (uint8_t*)heap_caps_calloc(_pixelCount*3, sizeof(uint8_t), MALLOC_CAP_8BIT);
 
     int rawPixelCount = 0;

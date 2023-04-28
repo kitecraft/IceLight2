@@ -6,7 +6,7 @@
 
 static const char* ICELED_CHANNEL_TAG = "IceLED_Channel";
 
-IRAM_ATTR static size_t rmt_encode_led_strip(rmt_encoder_t *encoder, rmt_channel_handle_t channel, const void *primary_data, size_t data_size, rmt_encode_state_t *ret_state)
+static size_t IRAM_ATTR rmt_encode_led_strip(rmt_encoder_t *encoder, rmt_channel_handle_t channel, const void *primary_data, size_t data_size, rmt_encode_state_t *ret_state)
 {
     rmt_led_strip_encoder_t *led_encoder = __containerof(encoder, rmt_led_strip_encoder_t, base);
     rmt_encoder_handle_t bytes_encoder = led_encoder->bytes_encoder;
@@ -122,7 +122,7 @@ esp_err_t rmt_new_led_strip_encoder(const led_strip_encoder_config_t *config, rm
         return ESP_FAIL;
     }
 
-    uint32_t reset_ticks = config->resolution / 1000000 * 50 / 2; // reset code duration defaults to 50us
+    uint32_t reset_ticks = config->resolution / 1000000 * 50; // reset code duration defaults to 50us
     led_encoder->reset_code = (rmt_symbol_word_t) {
         .duration0 = reset_ticks,
         .level0 = 0,
@@ -144,8 +144,8 @@ IceLED_Channel* CreateIceLED_Channel(iceled_channel_config_t config_)
         .gpio_num = config_.gpio,
         .clk_src = RMT_CLK_SRC_DEFAULT, // select source clock
         .resolution_hz = RMT_LED_STRIP_RESOLUTION_HZ,
-        .mem_block_symbols = 128, // increase the block size can make the LED less flickering
-        .trans_queue_depth = 8, // set the number of transactions that can be pending in the background
+        .mem_block_symbols = 64, // increase the block size can make the LED less flickering
+        .trans_queue_depth = 4, // set the number of transactions that can be pending in the background
     };
     //tx_chan_config.flags.io_od_mode = 0;
 
